@@ -1,5 +1,6 @@
 const User = require("../models/userModel")
 const bcrypt = require("bcrypt")
+const jwt = require("jsonwebtoken")
 
 exports.regUser = async (req, res) => {
     console.log("inside register user");
@@ -25,21 +26,27 @@ exports.loginUser = async (req, res) => {
     console.log("Inside login user");
     const {email,password} = req.body
     try {
+        console.log("inside try");
+        
         const existingUser = await User.findOne({email})
+        console.log(existingUser);
+        
         if(existingUser){
             const currentPswd = await bcrypt.compare(password,existingUser.password)
+            console.log(currentPswd);
+            
             if(currentPswd){
-             res.status(200).json({ message: "Login Successfully",existingUser })
-
+                const token = jwt.sign({userId:existingUser._id},process.env.jwtKey)
+                console.log(token);
+                
+                res.status(200).json({ message: "Login Successfully",user:existingUser,token })
             }else{
-             res.status(401).json({ message: "Password mismatch" })
-
+                res.status(401).json({ message: "Password mismatch" })
             }
         }else{
             res.status(400).json({ message: "user not found"})
-
         }
     } catch (error) {
-        res.status(500).json("Login Failed")
+        res.status(500).json("Login Failed",error)
     }
 }

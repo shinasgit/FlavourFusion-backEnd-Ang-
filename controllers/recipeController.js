@@ -23,3 +23,17 @@ exports.GetARecipe = async(req,res)=>{
     }
     
 }
+
+//related recipe get
+exports.getRelatedRecipe = async(req,res)=>{
+    console.log("Inisde related recipe");
+     const cuisine = req.query.cuisine
+    try {
+        const relatedRecipe = await Recipe.find({cuisine})
+        res.status(200).json(relatedRecipe)
+        
+    } catch (error) {
+        res.status(500).json("Error"+error)
+    }
+}
+
