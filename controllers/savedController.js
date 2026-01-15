@@ -10,9 +10,7 @@ exports.addToSavedRecipe = async(req,res)=>{
         if(existingRecipe){
             res.status(402).json("Recipe is already Added")
         }else{
-            const newRecipe = new savedRecipes({
-                recipeId:id,name,image,userId
-            })
+            const newRecipe = new savedRecipes({ recipeId:id,name,image,userId})
             await newRecipe.save()
             res.status(200).json("Recipe saved successfully",newRecipe)
         }
@@ -28,6 +26,7 @@ exports.getSavedRecipe = async(req,res)=>{
 
     try {
         const existingRecipe = await savedRecipes.find({userId})
+        
         res.status(200).json(existingRecipe)
     } catch (error) {
         res.status(500).json("Error"+error)
